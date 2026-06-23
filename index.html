@@ -1,0 +1,866 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ビジキャリ3級 反復ドリル</title>
+  <style>
+    :root {
+      --bg: #f7f9fb;
+      --panel: #ffffff;
+      --text: #17212b;
+      --muted: #667085;
+      --line: #d9e2ec;
+      --blue: #2457a6;
+      --blue-soft: #e9f1ff;
+      --green: #13795b;
+      --green-soft: #e8f6f0;
+      --red: #b42318;
+      --red-soft: #fff0ed;
+      --amber: #96690f;
+      --amber-soft: #fff7df;
+      --shadow: 0 14px 32px rgba(23, 33, 43, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.65;
+    }
+
+    button, select {
+      font: inherit;
+    }
+
+    .app {
+      width: min(960px, 100%);
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      margin: -16px -16px 14px;
+      padding: 14px 16px;
+      background: rgba(247, 249, 251, 0.95);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(10px);
+    }
+
+    .title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    .sub {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .count-badge {
+      flex: 0 0 auto;
+      padding: 6px 10px;
+      border: 1px solid #b9c9de;
+      border-radius: 999px;
+      color: var(--blue);
+      background: var(--blue-soft);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 14px 0;
+    }
+
+    .control {
+      display: grid;
+      gap: 5px;
+    }
+
+    label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    select {
+      width: 100%;
+      min-height: 42px;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--text);
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .btn {
+      min-height: 44px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .btn.primary {
+      border-color: var(--blue);
+      color: #ffffff;
+      background: var(--blue);
+    }
+
+    .btn.good {
+      border-color: #9ed8c1;
+      color: var(--green);
+      background: var(--green-soft);
+    }
+
+    .btn.warn {
+      border-color: #e6c875;
+      color: var(--amber);
+      background: var(--amber-soft);
+    }
+
+    .btn.danger {
+      border-color: #f0b5af;
+      color: var(--red);
+      background: var(--red-soft);
+    }
+
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .stat {
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+
+    .stat .value {
+      display: block;
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .stat .name {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .question-panel {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .tag {
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--green-soft);
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .progress-text {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .bar {
+      height: 8px;
+      margin-bottom: 16px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #edf1f5;
+    }
+
+    .bar > span {
+      display: block;
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--blue), var(--green));
+      transition: width 180ms ease;
+    }
+
+    .question {
+      margin: 0 0 14px;
+      font-size: 20px;
+      font-weight: 800;
+      line-height: 1.55;
+      letter-spacing: 0;
+    }
+
+    .choices {
+      display: grid;
+      gap: 10px;
+    }
+
+    .choice {
+      width: 100%;
+      min-height: 54px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+      font-weight: 650;
+    }
+
+    .choice.correct {
+      border-color: #74c69d;
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .choice.wrong {
+      border-color: #f0a19a;
+      background: var(--red-soft);
+      color: var(--red);
+    }
+
+    .choice[disabled] {
+      cursor: default;
+    }
+
+    .result {
+      display: none;
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #f9fbfd;
+    }
+
+    .result.show {
+      display: block;
+    }
+
+    .result-title {
+      margin: 0 0 4px;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .result-note {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .panel-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .tips {
+      margin: 14px 0 0;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .tips strong {
+      color: var(--text);
+    }
+
+    .empty {
+      display: none;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      text-align: center;
+    }
+
+    .empty.show {
+      display: block;
+    }
+
+    @media (max-width: 720px) {
+      .app { padding: 12px; }
+      .topbar { margin: -12px -12px 12px; padding: 12px; }
+      .controls { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .actions, .panel-actions { grid-template-columns: 1fr; }
+      h1 { font-size: 18px; }
+      .question { font-size: 18px; }
+      .question-panel { padding: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="title-row">
+        <div>
+          <h1>ビジキャリ3級 反復ドリル</h1>
+          <p class="sub">マーケティング3級・経理3級を合格ライン優先で反復</p>
+        </div>
+        <span class="count-badge" id="totalBadge">180問</span>
+      </div>
+    </header>
+
+    <section class="controls" aria-label="出題設定">
+      <div class="control">
+        <label for="subjectSelect">分野</label>
+        <select id="subjectSelect">
+          <option value="all">全分野</option>
+          <option value="marketing">マーケティング</option>
+          <option value="bookkeeping">経理 簿記・財務諸表</option>
+          <option value="cost">経理 原価計算</option>
+        </select>
+      </div>
+      <div class="control">
+        <label for="modeSelect">出題モード</label>
+        <select id="modeSelect">
+          <option value="random">全問ランダム</option>
+          <option value="mistakes">間違えた問題だけ</option>
+          <option value="unmastered">未定着を優先</option>
+          <option value="new">まだ解いていない問題</option>
+        </select>
+      </div>
+      <div class="control">
+        <label for="lengthSelect">1回の問題数</label>
+        <select id="lengthSelect">
+          <option value="10">10問</option>
+          <option value="20" selected>20問</option>
+          <option value="40">40問</option>
+          <option value="999">できるだけ多く</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="actions" aria-label="操作">
+      <button class="btn primary" id="startBtn" type="button">この設定で始める</button>
+      <button class="btn danger" id="resetBtn" type="button">成績をリセット</button>
+    </section>
+
+    <section class="stats" aria-label="成績">
+      <div class="stat"><span class="value" id="sessionScore">0/0</span><span class="name">今回の正解</span></div>
+      <div class="stat"><span class="value" id="allRate">0%</span><span class="name">累計正解率</span></div>
+      <div class="stat"><span class="value" id="mistakeCount">0</span><span class="name">復習候補</span></div>
+      <div class="stat"><span class="value" id="streakCount">0</span><span class="name">連続正解</span></div>
+    </section>
+
+    <section class="empty" id="emptyBox">
+      <strong>この条件の問題がありません。</strong><br>
+      分野やモードを変えて始めてください。
+    </section>
+
+    <section class="question-panel" id="quizPanel">
+      <div class="meta">
+        <span class="tag" id="subjectTag">準備中</span>
+        <span class="progress-text" id="progressText">0 / 0</span>
+      </div>
+      <div class="bar"><span id="progressBar"></span></div>
+      <p class="question" id="questionText">設定を選んで「この設定で始める」を押してください。</p>
+      <div class="choices" id="choices"></div>
+      <div class="result" id="resultBox">
+        <p class="result-title" id="resultTitle"></p>
+        <p class="result-note" id="resultNote"></p>
+      </div>
+      <div class="panel-actions">
+        <button class="btn" id="nextBtn" type="button" disabled>次の問題</button>
+        <button class="btn warn" id="againBtn" type="button">この問題を復習候補にする</button>
+        <button class="btn good" id="clearMistakeBtn" type="button">復習候補から外す</button>
+      </div>
+    </section>
+
+    <section class="tips">
+      <strong>使い方:</strong>
+      まずは全分野20問を何度か回します。間違いが増えてきたら「間違えた問題だけ」に切り替えます。
+      経理は「簿記・財務諸表」と「原価計算」を分けて回すと、弱点が見つけやすいです。
+    </section>
+  </main>
+
+  <script>
+    const facts = [
+      ["marketing", "マーケティング・コンセプト", "顧客ニーズを起点に企業活動を統合し、顧客満足と成果を両立させる考え方"],
+      ["marketing", "生産志向", "作れば売れるという前提で、生産効率や低価格を重視する考え方"],
+      ["marketing", "販売志向", "販売努力や販売促進によって売上を伸ばそうとする考え方"],
+      ["marketing", "顧客志向", "顧客の課題やニーズの理解を出発点にする考え方"],
+      ["marketing", "マクロ環境", "人口動態、経済、技術、法制度、社会文化など企業の外部にある大きな環境"],
+      ["marketing", "ミクロ環境", "顧客、競合、取引先、流通業者など企業活動に直接関わる環境"],
+      ["marketing", "SWOT分析", "強み、弱み、機会、脅威を整理する分析手法"],
+      ["marketing", "強み", "自社内部にあり、競争上プラスに働く要因"],
+      ["marketing", "弱み", "自社内部にあり、競争上マイナスに働く要因"],
+      ["marketing", "機会", "市場拡大や制度変更など、外部環境にある好ましい要因"],
+      ["marketing", "脅威", "競合強化や需要減少など、外部環境にある不利な要因"],
+      ["marketing", "STP", "市場細分化、標的市場の選定、ポジショニングの流れ"],
+      ["marketing", "セグメンテーション", "市場を顧客特性やニーズで細分化すること"],
+      ["marketing", "ターゲティング", "細分化した市場の中から狙う市場を選ぶこと"],
+      ["marketing", "ポジショニング", "顧客の頭の中で自社商品を競合と区別して位置づけること"],
+      ["marketing", "人口統計的基準", "年齢、性別、所得、家族構成などで市場を分ける基準"],
+      ["marketing", "地理的基準", "地域、気候、人口密度などで市場を分ける基準"],
+      ["marketing", "心理的基準", "価値観、ライフスタイル、性格などで市場を分ける基準"],
+      ["marketing", "行動基準", "購買頻度、使用場面、ロイヤルティなどで市場を分ける基準"],
+      ["marketing", "4P", "製品、価格、流通、プロモーションを組み合わせる考え方"],
+      ["marketing", "Product", "品質、機能、デザイン、ブランド、パッケージなど製品に関する要素"],
+      ["marketing", "Price", "価格水準、割引、支払条件など価格に関する要素"],
+      ["marketing", "Place", "流通経路、店舗、物流、在庫など顧客へ届ける仕組み"],
+      ["marketing", "Promotion", "広告、販売促進、人的販売、PRなど伝える活動"],
+      ["marketing", "7P", "4PにPeople、Process、Physical Evidenceを加えたサービス向けの考え方"],
+      ["marketing", "一次データ", "調査目的に合わせて新たに収集したデータ"],
+      ["marketing", "二次データ", "官公庁統計や社内資料など、すでに存在するデータ"],
+      ["marketing", "標本調査", "母集団の一部を調べて全体の傾向を推定する調査"],
+      ["marketing", "全数調査", "対象となる全員、全件を調べる調査"],
+      ["marketing", "クロス集計", "年齢層別の購入意向など、複数項目を組み合わせて見る集計"],
+      ["marketing", "観察法", "対象者の行動を観察して情報を集める調査法"],
+      ["marketing", "質問法", "アンケートや面接により対象者から回答を得る調査法"],
+      ["marketing", "実験法", "条件を変えて反応の違いを見る調査法"],
+      ["marketing", "消費者行動", "消費者が商品を認知、評価、購入、使用する一連の行動"],
+      ["marketing", "準拠集団", "消費者の判断や行動に影響を与える集団"],
+      ["marketing", "動機", "消費者が行動を起こす内面的なきっかけ"],
+      ["marketing", "知覚", "情報を選択し、解釈し、意味づける過程"],
+      ["marketing", "学習", "経験により行動や反応が変化すること"],
+      ["marketing", "態度", "対象に対する好意、非好意などの持続的な評価"],
+      ["marketing", "製品ライフサイクル", "導入期、成長期、成熟期、衰退期という市場での推移"],
+      ["marketing", "導入期", "認知獲得や試用促進が重要になる時期"],
+      ["marketing", "成長期", "需要が伸び、競合参入も増えやすい時期"],
+      ["marketing", "成熟期", "需要の伸びが鈍化し、差別化や維持が重要になる時期"],
+      ["marketing", "衰退期", "需要が減少し、撤退や縮小も検討される時期"],
+      ["marketing", "ブランド", "商品やサービスを識別し、信頼や差別化につながる名称や記号"],
+      ["marketing", "コストプラス法", "原価に一定の利益を加えて価格を決める方法"],
+      ["marketing", "競争志向価格", "競合他社の価格を参考にして価格を決める方法"],
+      ["marketing", "需要志向価格", "顧客の支払意思や需要の強さを参考に価格を決める方法"],
+      ["marketing", "ペネトレーション価格", "低価格で市場浸透を狙う価格政策"],
+      ["marketing", "スキミング価格", "導入初期に高価格を設定し、早期回収を狙う価格政策"],
+      ["marketing", "マーケティング・チャネル", "生産者から消費者へ商品や情報を届ける流通経路"],
+      ["marketing", "マルチチャネル", "店舗、EC、代理店など複数の経路を使うこと"],
+      ["marketing", "垂直的マーケティング・システム", "生産、卸、小売などが一体的に調整される流通の仕組み"],
+      ["marketing", "物流管理", "輸送、保管、荷役、包装、情報管理などを効率よく行う活動"],
+      ["marketing", "パッケージング", "商品の保護、情報表示、販売促進の役割を持つ包装"],
+      ["marketing", "広告", "媒体を使い、不特定多数に同一メッセージを伝える活動"],
+      ["marketing", "販売促進", "クーポンやキャンペーンなど短期的な購買促進策"],
+      ["marketing", "人的販売", "販売員が顧客と直接接して説明や提案を行う活動"],
+      ["marketing", "PR", "企業や商品への理解や好意的な関係づくりを目指す活動"],
+      ["marketing", "卸売業", "商品を大量に仕入れ、小売業者などへ分配する業者"],
+      ["marketing", "小売業", "最終消費者に商品やサービスを販売する業者"],
+
+      ["bookkeeping", "会計期間", "企業活動を一定期間に区切り、成績や状態を計算する期間"],
+      ["bookkeeping", "貸借対照表", "一定時点の資産、負債、純資産を示す財務諸表"],
+      ["bookkeeping", "損益計算書", "一定期間の収益、費用、利益を示す財務諸表"],
+      ["bookkeeping", "資産", "現金、売掛金、商品、建物など企業が保有する経済的資源"],
+      ["bookkeeping", "負債", "買掛金、借入金など将来支払う義務"],
+      ["bookkeeping", "純資産", "資産から負債を差し引いた持分"],
+      ["bookkeeping", "収益", "売上や受取利息など利益を増やす原因"],
+      ["bookkeeping", "費用", "仕入や給料など利益を減らす原因"],
+      ["bookkeeping", "借方", "資産の増加、負債の減少、費用の発生などを記入する側"],
+      ["bookkeeping", "貸方", "負債の増加、純資産の増加、収益の発生などを記入する側"],
+      ["bookkeeping", "仕訳", "取引を借方と貸方に分けて記録する手続"],
+      ["bookkeeping", "転記", "仕訳帳の記録を総勘定元帳へ写す手続"],
+      ["bookkeeping", "試算表", "借方合計と貸方合計の一致などを確認する表"],
+      ["bookkeeping", "売掛金", "商品を掛けで販売したときの代金請求権"],
+      ["bookkeeping", "買掛金", "商品を掛けで仕入れたときの支払義務"],
+      ["bookkeeping", "仮払消費税", "仕入時に支払った消費税を一時的に処理する勘定"],
+      ["bookkeeping", "仮受消費税", "売上時に預かった消費税を一時的に処理する勘定"],
+      ["bookkeeping", "小口現金", "少額支払いのために手元で管理する現金"],
+      ["bookkeeping", "当座預金", "小切手の振出しに利用される預金"],
+      ["bookkeeping", "銀行勘定調整表", "会社帳簿と銀行残高の不一致原因を整理する表"],
+      ["bookkeeping", "貸倒引当金", "売上債権の回収不能見込額を見積もるための勘定"],
+      ["bookkeeping", "減価償却", "固定資産の取得原価を使用期間にわたり費用配分する手続"],
+      ["bookkeeping", "取得原価", "購入代価に付随費用を加えた金額"],
+      ["bookkeeping", "前払費用", "当期に支払ったが翌期以降に対応する費用"],
+      ["bookkeeping", "未払費用", "当期に発生したがまだ支払っていない費用"],
+      ["bookkeeping", "未収収益", "当期に発生したがまだ受け取っていない収益"],
+      ["bookkeeping", "前受収益", "当期に受け取ったが翌期以降に対応する収益"],
+      ["bookkeeping", "売上原価", "期首商品棚卸高に当期仕入高を加え、期末商品棚卸高を差し引く原価"],
+      ["bookkeeping", "棚卸減耗費", "帳簿数量より実地数量が少ない場合の数量差による損失"],
+      ["bookkeeping", "商品評価損", "商品の時価低下による評価上の損失"],
+      ["bookkeeping", "売買目的有価証券", "短期売買目的で保有し、期末に時価評価する有価証券"],
+      ["bookkeeping", "未払法人税等", "決算時に見積もった法人税等の未払額"],
+      ["bookkeeping", "利益準備金", "配当時などに会社法上積み立てが求められることがある準備金"],
+      ["bookkeeping", "入金伝票", "現金を受け取った取引を記録する伝票"],
+      ["bookkeeping", "出金伝票", "現金を支払った取引を記録する伝票"],
+      ["bookkeeping", "振替伝票", "現金の収入支出を伴わない取引を記録する伝票"],
+      ["bookkeeping", "補助簿", "特定勘定の内訳を詳しく記録する帳簿"],
+      ["bookkeeping", "キャッシュ・フロー計算書", "現金及び現金同等物の増減を活動区分別に示す財務諸表"],
+      ["bookkeeping", "流動比率", "流動資産を流動負債で割り、短期支払能力を見る指標"],
+      ["bookkeeping", "自己資本比率", "総資本に占める自己資本の割合を見る安全性指標"],
+      ["bookkeeping", "ROA", "総資本を使ってどれだけ利益を上げたかを見る指標"],
+      ["bookkeeping", "ROE", "自己資本を使ってどれだけ利益を上げたかを見る指標"],
+      ["bookkeeping", "EPS", "1株当たり当期純利益"],
+      ["bookkeeping", "前受金", "商品引渡し前に代金の一部を受け取った場合の負債"],
+      ["bookkeeping", "仮払金", "内容や金額が確定していない支払いを一時的に処理する勘定"],
+
+      ["cost", "原価計算", "製品やサービスの原価を計算し、管理や意思決定に役立てる手続"],
+      ["cost", "製造原価", "製品を製造するために発生した原価"],
+      ["cost", "総原価", "製造原価に販売費及び一般管理費を加えた原価"],
+      ["cost", "材料費", "製品製造のために消費された材料の原価"],
+      ["cost", "労務費", "製造に関わる従業員の賃金や給料など"],
+      ["cost", "経費", "材料費、労務費以外の製造原価"],
+      ["cost", "直接材料費", "製品本体を構成する主要材料の消費額"],
+      ["cost", "直接労務費", "製造に直接従事する作業員の賃金"],
+      ["cost", "製造間接費", "複数製品に共通して発生し、配賦が必要な製造原価"],
+      ["cost", "個別原価計算", "注文や製造指図書ごとに原価を集計する方法"],
+      ["cost", "総合原価計算", "同種製品を連続大量生産する場合に期間単位で原価を計算する方法"],
+      ["cost", "原価計算期間", "原価を集計するために区切る一定期間"],
+      ["cost", "実際原価計算", "実際に発生した原価を基礎に計算する方法"],
+      ["cost", "標準原価計算", "あらかじめ設定した標準原価と実際原価との差異を分析する方法"],
+      ["cost", "全部原価計算", "固定製造原価を含めて製品原価を計算する方法"],
+      ["cost", "直接原価計算", "変動製造原価を中心に製品原価を計算し、固定費を期間費用とする方法"],
+      ["cost", "予定消費単価", "材料費計算を迅速化するために事前設定する消費単価"],
+      ["cost", "先入先出法", "先に仕入れた材料から先に消費したと仮定する方法"],
+      ["cost", "平均法", "材料の平均単価を用いて消費額を計算する方法"],
+      ["cost", "予定配賦率", "予定製造間接費を予定配賦基準量で割った率"],
+      ["cost", "配賦基準", "製造間接費を製品へ配る基準となる作業時間や機械時間など"],
+      ["cost", "部門別計算", "原価を部門別に集計し、より合理的に製品へ配賦する計算"],
+      ["cost", "補助部門費", "動力部や修繕部など製造部門を補助する部門で発生した費用"],
+      ["cost", "原価計算表", "製造指図書別などに原価を集計する表"],
+      ["cost", "作業くず", "製造過程で発生する材料の端材など"],
+      ["cost", "仕損", "加工に失敗して規格外となった製品"],
+      ["cost", "減損", "加工中に蒸発や粉散などで原料が減少すること"],
+      ["cost", "完成品換算量", "期末仕掛品を完成品何個分に相当するかで表した数量"],
+      ["cost", "工程別総合原価計算", "複数工程を経る製品について工程ごとに原価を計算する方法"],
+      ["cost", "組別総合原価計算", "種類の異なる製品群を組別に連続生産する場合の計算方法"],
+      ["cost", "等級別総合原価計算", "サイズや品質の違う同種製品を等価係数で計算する方法"],
+      ["cost", "等価係数", "等級別総合原価計算で製品間の原価負担割合を示す係数"],
+      ["cost", "連産品", "同一工程から必然的に複数の主要製品が生じるもの"],
+      ["cost", "原価差異", "予定原価や標準原価と実際原価との差"],
+      ["cost", "営業費計算", "販売費や一般管理費を分類、集計する計算"]
+    ];
+
+    const labels = {
+      marketing: "マーケティング",
+      bookkeeping: "経理 簿記・財務諸表",
+      cost: "経理 原価計算"
+    };
+
+    const storage = (() => {
+      try {
+        const key = "bizcareer-drill-storage-test";
+        window.localStorage.setItem(key, "1");
+        window.localStorage.removeItem(key);
+        return window.localStorage;
+      } catch (error) {
+        return null;
+      }
+    })();
+
+    function loadSavedStore() {
+      if (!storage) return {};
+      try {
+        return JSON.parse(storage.getItem("bizcareer-drill-stats") || "{}");
+      } catch (error) {
+        return {};
+      }
+    }
+
+    const state = {
+      allQuestions: [],
+      session: [],
+      currentIndex: 0,
+      answered: false,
+      sessionCorrect: 0,
+      sessionAnswered: 0,
+      streak: 0,
+      store: loadSavedStore()
+    };
+
+    const subjectSelect = document.getElementById("subjectSelect");
+    const modeSelect = document.getElementById("modeSelect");
+    const lengthSelect = document.getElementById("lengthSelect");
+    const startBtn = document.getElementById("startBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const againBtn = document.getElementById("againBtn");
+    const clearMistakeBtn = document.getElementById("clearMistakeBtn");
+    const quizPanel = document.getElementById("quizPanel");
+    const emptyBox = document.getElementById("emptyBox");
+    const subjectTag = document.getElementById("subjectTag");
+    const progressText = document.getElementById("progressText");
+    const progressBar = document.getElementById("progressBar");
+    const questionText = document.getElementById("questionText");
+    const choices = document.getElementById("choices");
+    const resultBox = document.getElementById("resultBox");
+    const resultTitle = document.getElementById("resultTitle");
+    const resultNote = document.getElementById("resultNote");
+    const sessionScore = document.getElementById("sessionScore");
+    const allRate = document.getElementById("allRate");
+    const mistakeCount = document.getElementById("mistakeCount");
+    const streakCount = document.getElementById("streakCount");
+    const totalBadge = document.getElementById("totalBadge");
+
+    function shuffle(items) {
+      const copy = [...items];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function buildQuestions() {
+      const bySubject = facts.reduce((map, item) => {
+        const subject = item[0];
+        map[subject] = map[subject] || [];
+        map[subject].push(item);
+        return map;
+      }, {});
+
+      const questions = [];
+      facts.forEach(([subject, term, definition], index) => {
+        const same = bySubject[subject].filter(item => item[1] !== term);
+        const wrongDefs = shuffle(same).slice(0, 3).map(item => item[2]);
+        const wrongTerms = shuffle(same).slice(0, 3).map(item => item[1]);
+        questions.push({
+          id: `d-${index}`,
+          subject,
+          prompt: `「${term}」の説明として最も適切なものはどれか。`,
+          answer: definition,
+          choices: shuffle([definition, ...wrongDefs]),
+          note: `${term}: ${definition}`
+        });
+        questions.push({
+          id: `t-${index}`,
+          subject,
+          prompt: `次の説明に当てはまる用語はどれか。\n${definition}`,
+          answer: term,
+          choices: shuffle([term, ...wrongTerms]),
+          note: `${term}: ${definition}`
+        });
+      });
+      return questions;
+    }
+
+    function saveStore() {
+      if (!storage) return;
+      try {
+        storage.setItem("bizcareer-drill-stats", JSON.stringify(state.store));
+      } catch (error) {
+        // iPhoneでローカルHTMLを開いた場合など、保存できない環境では一時成績で続ける。
+      }
+    }
+
+    function statFor(id) {
+      if (!state.store[id]) {
+        state.store[id] = { correct: 0, wrong: 0, seen: 0, mistake: false };
+      }
+      return state.store[id];
+    }
+
+    function filteredQuestions() {
+      const subject = subjectSelect.value;
+      const mode = modeSelect.value;
+      let list = state.allQuestions;
+      if (subject !== "all") {
+        list = list.filter(q => q.subject === subject);
+      }
+      if (mode === "mistakes") {
+        list = list.filter(q => statFor(q.id).mistake || statFor(q.id).wrong > 0);
+      }
+      if (mode === "unmastered") {
+        list = list.filter(q => {
+          const s = statFor(q.id);
+          return s.correct < 2 || s.wrong > 0 || s.mistake;
+        });
+      }
+      if (mode === "new") {
+        list = list.filter(q => statFor(q.id).seen === 0);
+      }
+      return list;
+    }
+
+    function startSession() {
+      state.sessionCorrect = 0;
+      state.sessionAnswered = 0;
+      state.streak = 0;
+      state.currentIndex = 0;
+      state.answered = false;
+      const limit = Number(lengthSelect.value);
+      const list = shuffle(filteredQuestions());
+      state.session = list.slice(0, Math.min(limit, list.length));
+      updateStats();
+      if (!state.session.length) {
+        quizPanel.style.display = "none";
+        emptyBox.classList.add("show");
+        return;
+      }
+      quizPanel.style.display = "";
+      emptyBox.classList.remove("show");
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const q = state.session[state.currentIndex];
+      state.answered = false;
+      subjectTag.textContent = labels[q.subject];
+      progressText.textContent = `${state.currentIndex + 1} / ${state.session.length}`;
+      progressBar.style.width = `${((state.currentIndex) / state.session.length) * 100}%`;
+      questionText.textContent = q.prompt;
+      choices.innerHTML = "";
+      q.choices.forEach(choice => {
+        const button = document.createElement("button");
+        button.className = "choice";
+        button.type = "button";
+        button.textContent = choice;
+        button.addEventListener("click", () => answerQuestion(choice));
+        choices.appendChild(button);
+      });
+      resultBox.classList.remove("show");
+      resultTitle.textContent = "";
+      resultNote.textContent = "";
+      nextBtn.disabled = true;
+      updateStats();
+    }
+
+    function answerQuestion(choice) {
+      if (state.answered) return;
+      const q = state.session[state.currentIndex];
+      const s = statFor(q.id);
+      const isCorrect = choice === q.answer;
+      state.answered = true;
+      state.sessionAnswered += 1;
+      s.seen += 1;
+      if (isCorrect) {
+        state.sessionCorrect += 1;
+        state.streak += 1;
+        s.correct += 1;
+        if (s.correct >= 2) s.mistake = false;
+      } else {
+        state.streak = 0;
+        s.wrong += 1;
+        s.mistake = true;
+      }
+      Array.from(choices.children).forEach(button => {
+        button.disabled = true;
+        if (button.textContent === q.answer) button.classList.add("correct");
+        if (button.textContent === choice && !isCorrect) button.classList.add("wrong");
+      });
+      resultTitle.textContent = isCorrect ? "正解です" : "不正解です";
+      resultNote.textContent = isCorrect ? q.note : `正解は「${q.answer}」です。${q.note}`;
+      resultBox.classList.add("show");
+      nextBtn.disabled = false;
+      progressBar.style.width = `${((state.currentIndex + 1) / state.session.length) * 100}%`;
+      saveStore();
+      updateStats();
+    }
+
+    function nextQuestion() {
+      if (state.currentIndex < state.session.length - 1) {
+        state.currentIndex += 1;
+        renderQuestion();
+        return;
+      }
+      questionText.textContent = `終了です。今回の正解は ${state.sessionCorrect} / ${state.session.length} でした。もう一度回すか、間違えた問題だけ復習してください。`;
+      subjectTag.textContent = "結果";
+      progressText.textContent = `${state.session.length} / ${state.session.length}`;
+      progressBar.style.width = "100%";
+      choices.innerHTML = "";
+      resultBox.classList.remove("show");
+      nextBtn.disabled = true;
+    }
+
+    function markCurrentMistake() {
+      const q = state.session[state.currentIndex];
+      if (!q) return;
+      statFor(q.id).mistake = true;
+      saveStore();
+      updateStats();
+    }
+
+    function clearCurrentMistake() {
+      const q = state.session[state.currentIndex];
+      if (!q) return;
+      statFor(q.id).mistake = false;
+      saveStore();
+      updateStats();
+    }
+
+    function updateStats() {
+      const values = Object.values(state.store);
+      const totalSeen = values.reduce((sum, s) => sum + s.correct + s.wrong, 0);
+      const totalCorrect = values.reduce((sum, s) => sum + s.correct, 0);
+      const mistakes = state.allQuestions.filter(q => {
+        const s = statFor(q.id);
+        return s.mistake || s.wrong > 0;
+      }).length;
+      sessionScore.textContent = `${state.sessionCorrect}/${state.sessionAnswered}`;
+      allRate.textContent = totalSeen ? `${Math.round((totalCorrect / totalSeen) * 100)}%` : "0%";
+      mistakeCount.textContent = String(mistakes);
+      streakCount.textContent = String(state.streak);
+    }
+
+    function resetStats() {
+      const ok = confirm("成績と復習候補をすべてリセットしますか？");
+      if (!ok) return;
+      state.store = {};
+      saveStore();
+      state.sessionCorrect = 0;
+      state.sessionAnswered = 0;
+      state.streak = 0;
+      updateStats();
+      startSession();
+    }
+
+    state.allQuestions = buildQuestions();
+    totalBadge.textContent = `${state.allQuestions.length}問`;
+    startBtn.addEventListener("click", startSession);
+    resetBtn.addEventListener("click", resetStats);
+    nextBtn.addEventListener("click", nextQuestion);
+    againBtn.addEventListener("click", markCurrentMistake);
+    clearMistakeBtn.addEventListener("click", clearCurrentMistake);
+    updateStats();
+    startSession();
+  </script>
+</body>
+</html>
